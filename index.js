@@ -9,8 +9,8 @@ app.use(express.json())
 
 
 
-
-const uri = "mongodb+srv://real-estate-db:BocHY9k6oJWI5YSk@cluster0.81efjl7.mongodb.net/?appName=Cluster0";
+//BocHY9k6oJWI5YSk
+const uri = "mongodb+srv://real-estate-db:passhere@cluster0.81efjl7.mongodb.net/?appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -23,6 +23,18 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+
+    const db = client.db('real-estate-db')
+    const listCollections = db.collection('property_listing')
+
+    app.get('/lists', async (req, res)=>{
+      const result = await listCollections.find().toArray()
+      res.send(result)
+    })
+
+
+
+
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
