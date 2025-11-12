@@ -33,25 +33,21 @@ async function run() {
     })
 
     app.get('/lists/:id', async (req, res) => {
-      const {id} = req.params;
-      const objectId = id
-      const result = await listCollections.findOne({_id: objectId})
+      const { id } = req.params;
+      const objectId = new ObjectId(id)
+      const result = await listCollections.findOne({ _id: objectId })
       res.send({
-        success:true,
+        success: true,
         result
       });
     });
 
-    app.post('/lists', async (req, res) => {
+    app.post("/lists", async (req, res) => {
       const data = req.body;
-      console.log(data);
+      data._id = new ObjectId(); // ensure consistent type
       const result = await listCollections.insertOne(data);
-
-      res.send({
-        success: true,
-        result
-      })
-    })
+      res.send(result);
+    });
 
 
     // Connect the client to the server	(optional starting in v4.7)
