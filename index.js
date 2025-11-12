@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const app = express()
 const cors = require('cors');
@@ -32,19 +32,26 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/lists/:id', async (req, res) => {
+      const {id} = req.params;
+      const objectId = id
+      const result = await listCollections.findOne({_id: objectId})
+      res.send({
+        success:true,
+        result
+      });
+    });
+
     app.post('/lists', async (req, res) => {
       const data = req.body;
       console.log(data);
-      const result = listCollections.insertOne(data);
+      const result = await listCollections.insertOne(data);
 
       res.send({
         success: true,
         result
-
       })
     })
-
-
 
 
     // Connect the client to the server	(optional starting in v4.7)
