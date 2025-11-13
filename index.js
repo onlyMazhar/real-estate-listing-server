@@ -27,7 +27,7 @@ async function run() {
     const db = client.db('real-estate-db')
     const listCollections = db.collection('property_listing')
     const ratingCollections = db.collection('ratings')
-    
+
     app.get('/lists', async (req, res) => {
       const result = await listCollections.find().toArray()
       res.send(result)
@@ -52,16 +52,32 @@ async function run() {
 
     app.get('/myProperties', async (req, res) => {
       const email = req.query.email
-      const result = await listCollections.find({user_email: email }).toArray()
+      const result = await listCollections.find({ user_email: email }).toArray()
       res.send(result)
     })
 
-    app.post('/ratings', async(req, res)=>{
+    app.post('/ratings', async (req, res) => {
       const data = req.body
       const result = await ratingCollections.insertOne(data)
       res.send(result)
     })
 
+    app.put('/lists/:id', async (req, res) => {
+      const { id } = req.params
+      const data = req.body
+      console.log(data)
+      const objectId = new ObjectId(id)
+      const filter = {_id: objectId}
+      const update = {
+        $set: data 
+      }
+      const result = listCollections.updateOne(filter,update)
+      res.send({
+        success: true,
+        result
+      })
+
+    })
 
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
