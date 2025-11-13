@@ -3,14 +3,14 @@ const express = require('express');
 const app = express()
 const cors = require('cors');
 const port = process.env.port || 3000;
-
+require("dotenv").config()
 app.use(cors())
 app.use(express.json())
 
 
 
 //BocHY9k6oJWI5YSk
-const uri = "mongodb+srv://real-estate-db:BocHY9k6oJWI5YSk@cluster0.81efjl7.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.81efjl7.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -67,32 +67,37 @@ async function run() {
       const data = req.body
       console.log(data)
       const objectId = new ObjectId(id)
-      const filter = {_id: objectId}
+      const filter = { _id: objectId }
       const update = {
-        $set: data 
+        $set: data
       }
-      const result = listCollections.updateOne(filter,update)
+      const result = listCollections.updateOne(filter, update)
       res.send({
         success: true,
         result
       })
     })
 
-    app.delete('/lists/:id', async (req, res) =>{
-      const {id} = req.params
-      const result = await listCollections.deleteOne ({_id: new ObjectId(id)})
+    app.delete('/lists/:id', async (req, res) => {
+      const { id } = req.params
+      const result = await listCollections.deleteOne({ _id: new ObjectId(id) })
 
       res.send({
         success: true,
         result
       })
     })
-
+    
+    
+    // latest 6 data with ( get + find)
+    app.get('/latest-property', async(req, res)=>{
+      const result = await listCollections.find().sort({posted_date: "desc"}).limit(6).toArray()
+      res.send(result)
+    })
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-
+ 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
