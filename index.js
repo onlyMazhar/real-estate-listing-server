@@ -26,7 +26,8 @@ async function run() {
 
     const db = client.db('real-estate-db')
     const listCollections = db.collection('property_listing')
-
+    const ratingCollections = db.collection('ratings')
+    
     app.get('/lists', async (req, res) => {
       const result = await listCollections.find().toArray()
       res.send(result)
@@ -48,6 +49,18 @@ async function run() {
       const result = await listCollections.insertOne(data);
       res.send(result);
     });
+
+    app.get('/myProperties', async (req, res) => {
+      const email = req.query.email
+      const result = await listCollections.find({user_email: email }).toArray()
+      res.send(result)
+    })
+
+    app.post('/ratings', async(req, res)=>{
+      const data = req.body
+      const result = await ratingCollections.insertOne(data)
+      res.send(result)
+    })
 
 
     // Connect the client to the server	(optional starting in v4.7)
