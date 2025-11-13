@@ -76,7 +76,16 @@ async function run() {
         success: true,
         result
       })
+    })
 
+    app.delete('/lists/:id', async (req, res) =>{
+      const {id} = req.params
+      const result = await listCollections.deleteOne ({_id: new ObjectId(id)})
+
+      res.send({
+        success: true,
+        result
+      })
     })
 
     // Connect the client to the server	(optional starting in v4.7)
